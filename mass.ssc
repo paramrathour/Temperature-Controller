@@ -1,0 +1,41 @@
+component mass
+% Thermal Mass
+% This block models internal energy storage in a thermal network. The rate
+% of temperature increase is proportional to the heat flow rate into the
+% material and inversely proportional to the mass and specific heat of the
+% material. 
+
+% Copyright 2005-2017 The MathWorks, Inc.
+
+inputs
+    sp_heat = {1, 'J/(kg*K)'}; % :right
+end
+
+nodes
+    M = foundation.thermal.thermal; % :left
+end
+
+parameters
+    mass       = {1,         'kg'}; % Mass
+end
+
+variables
+    % Differential variables
+    T = {value = {300, 'K'}, priority = priority.high}; % Temperature
+
+    Q = {0, 'W'}; % Heat flow rate
+end
+
+branches
+    Q : M.Q -> *;
+end
+
+equations
+    assert(mass > 0)
+    assert(sp_heat > 0)
+    T == M.T;
+    Q == mass * sp_heat * T.der;
+    assert(T > 0, 'Temperature must be greater than absolute zero')
+end
+
+end
